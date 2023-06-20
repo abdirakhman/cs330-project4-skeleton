@@ -98,8 +98,12 @@ class SnapClassifier {
         Log.d(TAG, tensor.tensorBuffer.shape.joinToString(","))
         val output = classifier.classify(tensor)
         Log.d(TAG, output.toString())
-
-        return output[0].categories.find { it.label == "Finger snapping" }!!.score
+//        Hiccup, Cough, Beep, bleep
+        return (3f * output[0].categories.find { it.label == "Finger snapping" }!!.score
+                + 1.5f * output[0].categories.find { it.label == "Hiccup" }!!.score
+        + 1.5f * output[0].categories.find { it.label == "Cough" }!!.score
+        + 1.5f * output[0].categories.find { it.label == "Beep, bleep" }!!.score
+        + 1.5f * output[0].categories.find { it.label == "Snoring" }!!.score)
     }
 
     fun startInferencing() {
@@ -152,6 +156,7 @@ class SnapClassifier {
         const val REFRESH_INTERVAL_MS = 33L
         const val YAMNET_MODEL = "yamnet_classification.tflite"
 
-        const val THRESHOLD = 0.3f
+        const val THRESHOLD = 1.1f
+        const val HECTIC_THRESHOLD = 500
     }
 }
